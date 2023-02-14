@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>TryHackMe.com - Stack Layout</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://assets.tryhackme.com/img/favicon.png"
+    />
+    <script
+      src="https://kit.fontawesome.com/4f572bc49d.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <!-- popup for introductions the game -->
+    <div class="introductions-container">
+      <div class="introductions slide-bottom">
+        <div class="instructions-header">
+          Instructions
+          <i class="fa-solid fa-xmark popup-close"></i>
+        </div>
+        <div class="instructions-body">
+          Drag and drop the stack pieces on the left into the correct stack
+          position on the right.
+        </div>
+      </div>
+    </div>
+
+    <!-- popup Flag for wining the game  -->
+    <div class="flag_modal-container wining-flag">
+      <div id="flag_modal">
+        <div class="flag-header">
+          Flag
+          <i class="fa-solid fa-xmark popup-close-flag"></i>
+        </div>
+        <div class="flag-body">THM{SMASHED_THE_STACK}</div>
+      </div>
+    </div>
+    <!-- popup Flag for losing the game  -->
+    <div class="flag_modal-container lose-flag">
+      <div id="flag_modal">
+        <div class="flag-header">
+          Game Over
+          <i class="fa-solid fa-xmark popup-close-flag-lose"></i>
+        </div>
+        <div class="flag-body">You are out of time. Please restart</div>
+        <div class="btn-container">
+          <button class="lose-btn">Restart</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- our main contaienr where header&content of game -->
+    <div class="wrapper">
+      <header>
+        <div class="logo">
+          <img
+            src="https://assets.tryhackme.com/img/logo/tryhackme_logo_full.svg"
+            alt=""
+          />
+        </div>
+        <h1>Stack Layout</h1>
+      </header>
+      <div class="timer-container">
+        <div class="timer">
+          <i class="fa-solid fa-clock mr-1"></i>
+          <h4 id="timer">30s</h4>
+          <div id="tooltip">Remaining time</div>
+        </div>
+      </div>
+      <div id="content">
+        <div id="memory"></div>
+
+        <div id="stack-pieces">
+          <div class="stack-piece" data-id="1" data-pos="0">
+            Caller's EBP/old EBP
+          </div>
+          <div class="stack-piece" data-id="2" data-pos="0">Return Address</div>
+          <div class="stack-piece" data-id="3" data-pos="0">Argument 1</div>
+          <div class="stack-piece" data-id="4" data-pos="0">Argument 2</div>
+          <div class="stack-piece" data-id="5" data-pos="0">
+            Local Variable 1
+          </div>
+          <div class="stack-piece" data-id="6" data-pos="0">
+            Local Variable 2
+          </div>
+          <div class="stack-piece-arrow" data-id="7" data-pos="0">
+            &larr; EBP
+          </div>
+          <div class="stack-piece-arrow" data-id="8" data-pos="0">
+            &larr; ESP
+          </div>
+        </div>
+        <div id="stack">
+          <div data-pos="1"></div>
+          <div data-pos="2"></div>
+          <div data-pos="3"></div>
+          <div data-pos="4"></div>
+          <div data-pos="5"></div>
+          <div data-pos="6"></div>
+          <div data-pos="8"></div>
+          <div class="stack-space"><b>Available Stack Space</b></div>
+        </div>
+        <div id="stack-pointers">
+          <div data-pos="10"></div>
+          <div data-pos="11"></div>
+          <div data-pos="12"></div>
+          <div data-pos="13"></div>
+          <div data-pos="14"></div>
+          <div data-pos="15"></div>
+          <div data-pos="17"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    <script src="script.js"></script>
+
+    <section>
+      <div class="bgPulse">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </section>
+  </body>
+</html>
