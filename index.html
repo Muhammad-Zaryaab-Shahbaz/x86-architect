@@ -2,137 +2,224 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>TryHackMe.com - Stack Layout</title>
-    <link rel="stylesheet" href="style.css" />
+    <title>TryHackMe | Stack Layout</title>
+    <meta
+      name="description"
+      content="TryHackMe | Stack Layout | TryHackMe is a free online platform for learning cyber security, using hands-on exercises and labs, all through your browser!"
+    />
+    <meta
+      name="og:description"
+      content="TryHackMe | Stack Layout | TryHackMe is a free online platform for learning cyber security, using hands-on exercises and labs, all through your browser!"
+    />
+    <meta
+      name="keywords"
+      content="cyber,security,cyber security,cyber security training,coding,computer,bitcoin,hacking,hackers,hacks,hack,exploits,keylogger,learn,poc"
+    />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+
+    <meta property="og:site_name" content="TryHackMe" />
+    <meta property="og:title" content="TryHackMe | Stack Layout" />
+    <meta
+      property="og:image"
+      content="https://tryhackme.com/img/meta/default.png"
+    />
+    <meta property="og:url" content="https://tryhackme.com" />
+    <meta
+      name="twitter:image"
+      content="https://tryhackme.com/img/meta/default.png"
+    />
+    <meta
+      title="author"
+      content="Muhammad Zaryaab Shahbaz (zariab64@gmail.com)"
+    />
     <link
       rel="icon"
       type="image/png"
       href="https://assets.tryhackme.com/img/favicon.png"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
     <script
-      src="https://kit.fontawesome.com/4f572bc49d.js"
+      src="https://kit.fontawesome.com/02dca0d8e3.js"
       crossorigin="anonymous"
     ></script>
   </head>
   <body>
-    <!-- popup for introductions the game -->
-    <div class="introductions-container">
-      <div class="introductions slide-bottom">
-        <div class="instructions-header">
-          Instructions
-          <i class="fa-solid fa-xmark popup-close"></i>
-        </div>
-        <div class="instructions-body">
-          Drag and drop the stack pieces on the left into the correct stack
-          position on the right.
+    <div
+      class="modal fade"
+      id="introduction"
+      aria-hidden="true"
+      aria-labelledby="modalLabel"
+      tabindex="-1"
+      data-bs-backdrop="static"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalLabel">Instructions</h5>
+          </div>
+          <div class="modal-body">
+            <p class="fw-bold text-center mb-0">
+              Drag and drop the stack pieces on the left into the correct stack
+              position on the right.
+            </p>
+            <button
+              class="neutral btn mt-2 w-100 text-white"
+              onclick="start()"
+            >
+              Let's proceed!
+            </button>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- popup Flag for wining the game  -->
-    <div class="flag_modal-container wining-flag">
-      <div id="flag_modal">
-        <div class="flag-header">
-          Flag
-          <i class="fa-solid fa-xmark popup-close-flag"></i>
+    <div
+      class="modal fade"
+      id="flag"
+      aria-hidden="true"
+      aria-labelledby="modalLabel"
+      tabindex="-1"
+      data-bs-backdrop="static"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalLabel">Flag</h5>
+          </div>
+          <div class="modal-body">
+            <div
+              class="d-flex align-items-center justify-content-between cursor-pointer mb-2"
+              data-bs-toggle="tooltip"
+              data-bs-title="Copy to clipboard"
+              onclick="copyText()"
+              id="flag-container"
+            >
+              <p id="flag-text" class="fw-bold text-center mb-0"></p>
+              <i class="fas fa-copy"></i>
+            </div>
+          </div>
         </div>
-        <div class="flag-body">THM{SMASHED_THE_STACK}</div>
       </div>
     </div>
-    <!-- popup Flag for losing the game  -->
-    <div class="flag_modal-container lose-flag">
-      <div id="flag_modal">
-        <div class="flag-header">
-          Game Over
-          <i class="fa-solid fa-xmark popup-close-flag-lose"></i>
-        </div>
-        <div class="flag-body">You are out of time. Please restart</div>
-        <div class="btn-container">
-          <button class="lose-btn">Restart</button>
+    <div
+      class="modal fade"
+      id="gameOver"
+      aria-hidden="true"
+      aria-labelledby="modalLabel"
+      tabindex="-1"
+      data-bs-backdrop="static"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalLabel">Game Over</h5>
+          </div>
+          <div class="modal-body">
+            <p class="fw-bold text-center mb-0" id="game-over-text">
+              You ran out of time. Game over!
+            </p>
+            <button
+              class="neutral btn mt-2 w-100 text-white"
+              onclick="location.reload()"
+            >
+              Restart
+            </button>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- our main contaienr where header&content of game -->
-    <div class="wrapper">
-      <header>
-        <div class="logo">
-          <img
-            src="https://assets.tryhackme.com/img/logo/tryhackme_logo_full.svg"
-            alt=""
-          />
-        </div>
-        <h1>Stack Layout</h1>
-      </header>
-      <div class="timer-container">
-        <div class="timer">
-          <i class="fa-solid fa-clock mr-1"></i>
-          <h4 id="timer">30s</h4>
-          <div id="tooltip">Remaining time</div>
-        </div>
-      </div>
-      <div id="content">
-        <div id="memory"></div>
-
-        <div id="stack-pieces">
-          <div class="stack-piece" data-id="1" data-pos="0">
-            Caller's EBP/old EBP
+    <div class="container-fluid py-4">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="game-body d-flex flex-column pb-3">
+            <!-- Header -->
+            <div id="header" class="container-fluid thm-bg-dark px-3 py-3">
+              <div class="row">
+                <div class="col-sm-2 mb-sm-0 mb-3">
+                  <div class="text-center h-100 d-flex align-items-center">
+                    <img
+                      class="logo w-100"
+                      alt="Logo"
+                      src="https://assets.tryhackme.com/img/logo/tryhackme_logo_full.svg"
+                    />
+                  </div>
+                </div>
+                <div class="col-sm-10">
+                  <h2 class="text-center mb-0" id="title">Stack Layout</h2>
+                  <div
+                    id="clock"
+                    data-bs-toggle="tooltip"
+                    data-bs-title="Time Remaining"
+                    class="d-flex align-items-center justify-content-center"
+                  >
+                    <i class="fw-normal fa-solid fa-clock me-1"></i>
+                    <p id="timer" class="mb-0 fw-normal">30s</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Header End -->
+            <div class="container-fluid mt-3">
+              <div class="row">
+                <div id="stack-pieces" class="col-3"></div>
+                <div class="col-3">
+                  <div id="stack">
+                    <div data-pos="1" class="rounded-top">
+                      <i class="fa-regular fa-circle-check"></i>
+                    </div>
+                    <div data-pos="2">
+                      <i class="fa-regular fa-circle-check"></i>
+                    </div>
+                    <div data-pos="3">
+                      <i class="fa-regular fa-circle-check"></i>
+                    </div>
+                    <div data-pos="4">
+                      <i class="fa-regular fa-circle-check"></i>
+                    </div>
+                    <div data-pos="5">
+                      <i class="fa-regular fa-circle-check"></i>
+                    </div>
+                    <div data-pos="6">
+                      <i class="fa-regular fa-circle-check"></i>
+                    </div>
+                    <div data-pos="8">
+                      <i class="fa-regular fa-circle-check"></i>
+                    </div>
+                    <div class="stack-space d-flex justify-content-center py-4 rounded-bottom">
+                      <b>Available Stack Space</b>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-2 col-md-3">
+                  <div id="stack-pointers">
+                    <div data-pos="10" class="rounded-top"></div>
+                    <div data-pos="11"></div>
+                    <div data-pos="12"></div>
+                    <div data-pos="13"></div>
+                    <div data-pos="14"></div>
+                    <div data-pos="15"></div>
+                    <div data-pos="17" class="rounded-bottom"></div>
+                  </div>
+                </div>
+                <div class="col-4 col-md-3">
+                  <img src="memory.png" alt="Memory" />
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="stack-piece" data-id="2" data-pos="0">Return Address</div>
-          <div class="stack-piece" data-id="3" data-pos="0">Argument 1</div>
-          <div class="stack-piece" data-id="4" data-pos="0">Argument 2</div>
-          <div class="stack-piece" data-id="5" data-pos="0">
-            Local Variable 1
-          </div>
-          <div class="stack-piece" data-id="6" data-pos="0">
-            Local Variable 2
-          </div>
-          <div class="stack-piece-arrow" data-id="7" data-pos="0">
-            &larr; EBP
-          </div>
-          <div class="stack-piece-arrow" data-id="8" data-pos="0">
-            &larr; ESP
-          </div>
-        </div>
-        <div id="stack">
-          <div data-pos="1"></div>
-          <div data-pos="2"></div>
-          <div data-pos="3"></div>
-          <div data-pos="4"></div>
-          <div data-pos="5"></div>
-          <div data-pos="6"></div>
-          <div data-pos="8"></div>
-          <div class="stack-space"><b>Available Stack Space</b></div>
-        </div>
-        <div id="stack-pointers">
-          <div data-pos="10"></div>
-          <div data-pos="11"></div>
-          <div data-pos="12"></div>
-          <div data-pos="13"></div>
-          <div data-pos="14"></div>
-          <div data-pos="15"></div>
-          <div data-pos="17"></div>
         </div>
       </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"></script>
     <script src="script.js"></script>
-
-    <section>
-      <div class="bgPulse">
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-    </section>
   </body>
 </html>

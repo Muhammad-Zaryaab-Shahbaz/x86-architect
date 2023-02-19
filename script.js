@@ -1,60 +1,94 @@
+const initModal = id => new bootstrap.Modal(document.getElementById(id), {});
+const introductionModal = initModal("introduction");
+const flagModal = initModal("flag");
+const gameOverModal = initModal("gameOver");
+introductionModal.toggle();
+
+let startTimer = false;
+let seconds = 30;
+let lose = false;
+let finsh = false;
+
+const stackGuide = {
+  "1": "4",
+  "2": "3",
+  "3": "1",
+  "4": "2",
+  "5": "5",
+  "6": "6",
+};
+
+const arrowGuide = {
+  "7": "13",
+  "8": "17",
+};
+
 function checkAnswers() {
   let correct = 0;
-  if (parseInt($('div[data-id="1"]').attr("data-pos")) === 4) correct++;
-  if (parseInt($('div[data-id="2"]').attr("data-pos")) === 3) correct++;
-  if (parseInt($('div[data-id="3"]').attr("data-pos")) === 1) correct++;
-  if (parseInt($('div[data-id="4"]').attr("data-pos")) === 2) correct++;
-  if (parseInt($('div[data-id="5"]').attr("data-pos")) === 5) correct++;
-  if (parseInt($('div[data-id="6"]').attr("data-pos")) === 6) correct++;
-  if (parseInt($('div[data-id="7"]').attr("data-pos")) === 13) correct++;
-  if (parseInt($('div[data-id="8"]').attr("data-pos")) === 17) correct++;
+  Object.keys(stackGuide).forEach(question => {
+    const answer = $(`div[data-id="${question}"]`).attr("data-pos");
+    if (answer === stackGuide[question]) correct++;
+  });
 
-  if (correct === 8) {
-    $(".wining-flag").css("display", "flex");
-    closePopup("popup-close-flag", "wining-flag", true);
-    finsh = true;
-    return true;
-  } else {
-    return false;
-  }
+  Object.keys(arrowGuide).forEach(question => {
+    const answer = $(`div[data-id="${question}"]`).attr("data-pos");
+    if (answer === arrowGuide[question]) correct++;
+  });
+
+  if (correct !== 8) return;
+
+  const flag = atob("VEhNe1NNQVNIRURfVEhFX1NUQUNLfQ==");
+  $("#flag-text").text(flag);
+  flagModal.toggle();
+  finsh = true;
+  return true;
 }
 
-$(function () {
+const initStack = () => {
+  const items = [
+    "Caller's EBP/old EBP",
+    "Return Address",
+    "Argument 1",
+    "Argument 2",
+    "Local Variable 1",
+    "Local Variable 2",
+    "&larr; EBP",
+    "&larr; ESP",
+  ];
+  const html = items
+    .map((item, index) => {
+      const cls = index > 5 ? "stack-piece-arrow" : "stack-piece";
+      return `
+    <div
+      class="mb-2 neutral btn text-white w-100 ${cls}"
+      data-id="${index + 1}"
+      data-pos="0"
+    >${item}</div>`;
+    })
+    .join("");
+  $("#stack-pieces").html(html);
+};
+
+$(function() {
+  const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+  [...tooltips].map(t => new bootstrap.Tooltip(t));
+
+  initStack();
+
   $(".stack-piece").draggable({
-    revert: function (e, ui) {
-      let id = parseInt($(this).attr("data-id"));
-      let pos = parseInt($(e).attr("data-pos"));
+    revert: function(e, ui) {
+      const id = $(this).attr("data-id");
+      const pos = $(e).attr("data-pos");
 
-      if (id === 1 && pos !== 4) {
-        $(this).attr("data-pos", "0");
-        console.log(this);
-        return true;
-      }
-
-      if (id === 2 && pos !== 3) {
+      if (stackGuide[id] !== pos) {
         $(this).attr("data-pos", "0");
         return true;
       }
 
-      if (id === 3 && pos !== 1) {
-        $(this).attr("data-pos", "0");
-        return true;
-      }
-
-      if (id === 4 && pos !== 2) {
-        $(this).attr("data-pos", "0");
-        return true;
-      }
-
-      if (id === 5 && pos !== 5) {
-        $(this).attr("data-pos", "0");
-        return true;
-      }
-
-      if (id === 6 && pos !== 6) {
-        $(this).attr("data-pos", "0");
-        return true;
-      }
+      $(this).addClass("correct");
+      $(e).addClass("correct");
+      const height = $(this).height();
+      $(e).height(height);
 
       checkAnswers();
       return false;
@@ -62,19 +96,19 @@ $(function () {
   });
 
   $(".stack-piece-arrow").draggable({
-    revert: function (e, ui) {
-      let id = parseInt($(this).attr("data-id"));
-      let pos = parseInt($(e).attr("data-pos"));
+    revert: function(e, ui) {
+      const id = $(this).attr("data-id");
+      const pos = $(e).attr("data-pos");
 
-      if (id === 7 && pos !== 13) {
+      if (arrowGuide[id] !== pos) {
         $(this).attr("data-pos", "0");
         return true;
       }
 
-      if (id === 8 && pos !== 17) {
-        $(this).attr("data-pos", "0");
-        return true;
-      }
+      $(this).addClass("correct");
+      $(e).addClass("correct");
+      const height = $(this).height();
+      $(e).height(height);
 
       checkAnswers();
       return false;
@@ -83,7 +117,7 @@ $(function () {
 
   $("div#stack div").droppable({
     accept: ".stack-piece",
-    drop: function (event, ui) {
+    drop: function(event, ui) {
       var $this = $(this);
       //$(this).droppable('disable');
       ui.draggable.attr("data-pos", $(this).attr("data-pos"));
@@ -91,21 +125,21 @@ $(function () {
         my: "center",
         at: "center",
         of: $this,
-        using: function (pos) {
-          $(this).animate(pos, 200, "linear", function () {
+        using: function(pos) {
+          $(this).animate(pos, 200, "linear", function() {
             //checkAnswers();
           });
         },
       });
     },
-    out: function (event, ui) {
+    out: function(event, ui) {
       ui.draggable.attr("data-pos", "0");
     },
   });
 
   $("div#stack-pointers div").droppable({
     accept: ".stack-piece-arrow",
-    drop: function (event, ui) {
+    drop: function(event, ui) {
       var $this = $(this);
       //$(this).droppable('disable');
       ui.draggable.attr("data-pos", $(this).attr("data-pos"));
@@ -113,64 +147,50 @@ $(function () {
         my: "center",
         at: "center",
         of: $this,
-        using: function (pos) {
-          $(this).animate(pos, 200, "linear", function () {
+        using: function(pos) {
+          $(this).animate(pos, 200, "linear", function() {
             //checkAnswers();
           });
         },
       });
     },
-    out: function (event, ui) {
+    out: function(event, ui) {
       //   console.log(event);
       ui.draggable.attr("data-pos", "0");
     },
   });
 });
 
-let startTimer = false;
-let seconds = 30;
-let lose = false;
-let finsh = false;
-setInterval(function () {
+const start = () => {
+  introductionModal.hide();
+  startTimer = true;
+};
+setInterval(function() {
   if (startTimer && seconds > 0) {
     if (finsh) return;
     seconds = seconds - 1;
+    if (seconds <= 10) {
+      $("#clock").addClass("text-danger");
+    }
     $("#timer").text(`${seconds}s`);
   } else {
     if (lose) return;
     $("#timer").text("30s");
+    $("#clock").removeClass("text-danger");
     if (seconds == 0) {
-      $(`.lose-flag`).css("display", "flex");
-      closePopupLose("popup-close-flag-lose", "flag_modal-container");
-      closePopupLose("lose-btn", "flag_modal-container");
+      gameOverModal.toggle();
       lose = true;
     }
   }
 }, 1000);
 
-function closePopupLose(select, remove) {
-  $(`.${select}`).click(function () {
-    $(`.${remove}`).css("display", "none");
-    location.reload();
-  });
-}
-function closePopup(select, remove, load) {
-  $(`.${select}`).click(function () {
-    $(`.${remove}`).remove();
-    setTimeout(() => {
-      startTimer = true;
-      if (load) location.reload();
-    }, 1000);
-  });
-}
+const copyText = (label = "flag-text", container = "flag-container") => {
+  const text = $(`#${label}`).text();
+  navigator.clipboard.writeText(text);
 
-$(".timer").hover(
-  function () {
-    $("#tooltip").show();
-  },
-  function () {
-    $("#tooltip").hide();
-  }
-);
-
-closePopup("popup-close", "introductions-container", false);
+  const tooltip = bootstrap.Tooltip.getInstance(`#${container}`);
+  tooltip.setContent({ ".tooltip-inner": "Copied!" });
+  setTimeout(() => {
+    tooltip.setContent({ ".tooltip-inner": "Copy to clipboard" });
+  }, 2000);
+};
