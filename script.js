@@ -5,7 +5,7 @@ const gameOverModal = initModal("gameOver");
 introductionModal.toggle();
 
 let startTimer = false;
-let seconds = 30;
+let seconds = 60;
 let lose = false;
 let finsh = false;
 
@@ -55,7 +55,8 @@ const initStack = () => {
     "&larr; EBP",
     "&larr; ESP",
   ];
-  const html = items
+  let html = `<h5 class="text-dark fw-bold text-center dot-border-bottom">Stack Elements</h5>`;
+  html += items
     .map((item, index) => {
       const cls = index > 5 ? "stack-piece-arrow" : "stack-piece";
       return `
@@ -166,21 +167,22 @@ const start = () => {
   startTimer = true;
 };
 setInterval(function() {
-  if (startTimer && seconds > 0) {
-    if (finsh) return;
+  if (!startTimer) return;
+  if (finsh || lose) return;
+
+  if (seconds > 0) {
     seconds = seconds - 1;
-    if (seconds <= 10) {
-      $("#clock").addClass("text-danger");
-    }
     $("#timer").text(`${seconds}s`);
-  } else {
-    if (lose) return;
-    $("#timer").text("30s");
-    $("#clock").removeClass("text-danger");
-    if (seconds == 0) {
-      gameOverModal.toggle();
-      lose = true;
+    if (seconds <= 20) {
+      $("#clock").addClass(`danger`);
     }
+    return;
+  }
+
+  $("#timer").text("Time's Up!");
+  if (seconds == 0) {
+    gameOverModal.toggle();
+    lose = true;
   }
 }, 1000);
 

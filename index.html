@@ -150,7 +150,8 @@
                   </div>
                 </div>
                 <div class="col-sm-10">
-                  <h2 class="text-center mb-0" id="title">Stack Layout</h2>
+                  <h2 class="text-center mb-0 thm-text-success" id="title">Stack Layout</h2>
+                  <p class="text-center mb-0" id="description">Please select the stack elements from the left column and place them on the stack (middle column). Also, select the stack registers from the left column so that they point to the correct place on the stack.</h2>
                   <div
                     id="clock"
                     data-bs-toggle="tooltip"
@@ -158,7 +159,7 @@
                     class="d-flex align-items-center justify-content-center"
                   >
                     <i class="fw-normal fa-solid fa-clock me-1"></i>
-                    <p id="timer" class="mb-0 fw-normal">30s</p>
+                    <p id="timer" class="mb-0 fw-normal">60s</p>
                   </div>
                 </div>
               </div>
@@ -168,6 +169,7 @@
               <div class="row">
                 <div id="stack-pieces" class="col-3"></div>
                 <div class="col-3">
+                  <h5 class="text-dark fw-bold text-center dot-border-bottom">Stack</h5>
                   <div id="stack">
                     <div data-pos="1" class="rounded-top">
                       <i class="fa-regular fa-circle-check"></i>
@@ -197,6 +199,7 @@
                 </div>
                 <div class="col-2 col-md-3">
                   <div id="stack-pointers">
+                    <h5 class="text-dark fw-bold text-center dot-border-bottom">Registers</h5>
                     <div data-pos="10" class="rounded-top"></div>
                     <div data-pos="11"></div>
                     <div data-pos="12"></div>

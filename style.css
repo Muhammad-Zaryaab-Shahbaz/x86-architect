@@ -134,12 +134,16 @@ div#stack div.stack-space {
 
 div#stack-pointers .correct {
   background: #223654;
-  border: 1px dotted #a3ea2a;
+  border-top: 1px dotted #a3ea2a;
+  border-left: 1px dotted #a3ea2a;
+  border-right: 1px dotted #a3ea2a;
 }
 
 div#stack div.correct {
   background: #223654;
-  border: 1px dotted #a3ea2a;
+  border-top: 1px dotted #a3ea2a;
+  border-left: 1px dotted #a3ea2a;
+  border-right: 1px dotted #a3ea2a;
 }
 
 .stack-piece-arrow.correct:hover,
@@ -148,4 +152,7 @@ div#stack div.correct {
 }
 .cursor-pointer {
   cursor: pointer;
+}
+.dot-border-bottom {
+  border-bottom: 1px dotted white;
 }
